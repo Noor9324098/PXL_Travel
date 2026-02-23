@@ -10,6 +10,9 @@ import SignUp from "./pages/SignUp";
 import Search from "./pages/Search";
 import Booking from "./pages/Booking";
 import Bookings from "./pages/Bookings";
+import AdminDashboard from "./pages/AdminDashboard";
+import AddLocalFlights from "./pages/AddLocalFlights";
+import AddUrbanTransportation from "./pages/AddUrbanTransportation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +31,9 @@ const App = () => (
           <Route path="/search" element={<Search />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/bookings" element={<Bookings />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/local-flights" element={<AddLocalFlights />} />
+          <Route path="/admin/urban-transportation" element={<AddUrbanTransportation />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

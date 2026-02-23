@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { User, LogOut, Menu } from "lucide-react";
+import { User, LogOut, Menu, Shield } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { isAdmin } from "@/lib/admin";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -72,6 +73,14 @@ export const Header = () => {
           <nav className="flex items-center gap-3">
             {user ? (
               <>
+                {isAdmin(user.email) && (
+                  <Link to="/admin">
+                    <Button variant="ghost" className="hover:bg-accent/50 transition-all duration-200 font-medium">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin
+                    </Button>
+                  </Link>
+                )}
                 <Link to="/bookings">
                   <Button variant="ghost" className="hover:bg-accent/50 transition-all duration-200 font-medium">
                     My Bookings

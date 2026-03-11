@@ -13,10 +13,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || "MONGODB_URI_REDACTED";
+// MongoDB Connection - URI must be provided via environment variable
+const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URI, {
+if (!MONGODB_URI) {
+  console.error("Missing MONGODB_URI environment variable. Please set it in backend-example/.env");
+}
+
+mongoose.connect(MONGODB_URI || "", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

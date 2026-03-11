@@ -69,7 +69,7 @@ export const PageTransition = () => {
               lottieElementRef.current.parentNode.removeChild(lottieElementRef.current);
               lottieElementRef.current = null;
             }
-          }, 6000); // Show for 6 seconds
+          }, 2000); // Show for 6 seconds
         } catch (error) {
           console.error("Error loading Lottie animation:", error);
           // If animation fails to load, hide transition after a short delay

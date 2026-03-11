@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -223,7 +225,58 @@ app.put('/api/users/:id/admin', authenticate, async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+// AI Chat endpoint (Groq proxy, OpenAI-compatible)
+app.post('/api/chat', async (req, res) => {
+  try {
+    const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'GROQ_API_KEY is not configured on the server' });
+    }
+
+    const { messages } = req.body || {};
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'messages array is required' });
+    }
+
+    const response = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        // Use a Groq-supported model (OpenAI-compatible API)
+        model: 'llama-3.1-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content:
+              "You are PXL Travel's helpful AI assistant. Give short, clear answers about flights, local and urban transportation, and how to use the PXL website. If the question is unrelated, briefly steer back to travel help.",
+          },
+          ...messages,
+        ],
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+      }
+    );
+
+    const reply =
+      response.data?.choices?.[0]?.message?.content?.trim() ||
+      "Sorry, I couldn't generate a reply. Please try again.";
+
+    res.json({ reply });
+  } catch (error) {
+    console.error('OpenAI /api/chat error:', error.response?.data || error.message || error);
+    const message =
+      error.response?.data?.error?.message ||
+      error.message ||
+      'Unexpected error while talking to the AI.';
+    res.status(500).json({ error: message });
+  }
+});
+
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

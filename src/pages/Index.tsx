@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
-import { Features } from "@/components/Features";
 import { HowItWorks } from "@/components/HowItWorks";
-import { Benefits } from "@/components/Benefits";
-import { CallToAction } from "@/components/CallToAction";
 import { Footer } from "@/components/Footer";
 import { MessageCircle, X, Send } from "lucide-react";
 
@@ -108,15 +105,12 @@ const Index = () => {
       className="min-h-screen"
       style={{
         background:
-          "linear-gradient(135deg, #E97528 0%, rgba(233, 117, 40, 0.75) 25%, rgba(233, 117, 40, 0.4) 50%, rgba(233, 117, 40, 0.15) 75%, rgba(233, 117, 40, 0.08) 100%)",
+          "linear-gradient(150deg, #fdf6e3 0%, #f8f1e8 25%, #e8f3ff 60%, #d7ecff 100%)",
       }}
     >
       <Header />
       <Hero />
-      <Features />
       <HowItWorks />
-      <Benefits />
-      <CallToAction />
       <Footer />
 
       {/* Chat panel */}

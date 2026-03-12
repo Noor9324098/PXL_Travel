@@ -25,24 +25,47 @@ export const Hero = () => {
           <h1 className="font-display text-5xl md:text-7xl font-bold mb-6 animate-slide-up leading-tight">
             Book Flights Without Credit Cards
           </h1>
-          
-          <p className="text-xl md:text-2xl mb-16 text-primary-foreground/90 animate-slide-up max-w-3xl mx-auto" style={{ animationDelay: "0.1s" }}>
-            PXL Travel connects you with local travel agencies. Get AI-powered personalized recommendations, submit booking requests, and travel with confidence.
-          </p>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <div>
-              <div className="text-4xl font-bold font-display mb-2">100%</div>
-              <div className="text-sm text-primary-foreground/80">No Credit Card Needed</div>
+          {/* Collage of travel moments (replaces stats text) */}
+          <div
+            className="mt-10 md:mt-14 grid gap-4 md:gap-6 md:grid-cols-3 max-w-5xl mx-auto animate-fade-in"
+            style={{ animationDelay: "0.15s" }}
+          >
+            <div className="space-y-4 md:space-y-6">
+              <div className="overflow-hidden rounded-2xl bg-card/90 shadow-soft">
+                <img
+                  src="/images/beach-bag.png"
+                  alt="Tropical beach with bag and snorkel"
+                  className="h-32 w-full object-cover md:h-40"
+                />
+              </div>
+              <div className="overflow-hidden rounded-2xl bg-card/90 shadow-soft">
+                <img
+                  src="/images/happy-travellers.png"
+                  alt="Happy travellers holding tickets"
+                  className="h-32 w-full object-cover md:h-40"
+                />
+              </div>
             </div>
-            <div>
-              <div className="text-4xl font-bold font-display mb-2">AI</div>
-              <div className="text-sm text-primary-foreground/80">Personalized Recommendations</div>
+
+            <div className="hidden md:block">
+              <div className="overflow-hidden rounded-3xl bg-card/95 shadow-large h-full flex items-center">
+                <img
+                  src="/images/pool-morning.png"
+                  alt="Resort pool in the morning"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
-            <div>
-              <div className="text-4xl font-bold font-display mb-2">24/7</div>
-              <div className="text-sm text-primary-foreground/80">Agency Support</div>
+
+            <div className="flex md:block">
+              <div className="overflow-hidden rounded-3xl bg-card/95 shadow-large w-full">
+                <img
+                  src="/images/sunset-umbrellas.png"
+                  alt="Sunset at the sea with umbrellas"
+                  className="h-40 w-full object-cover md:h-full"
+                />
+              </div>
             </div>
           </div>
         </div>

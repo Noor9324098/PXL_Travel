@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { Bus, ArrowLeft, Loader2, Plus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { z } from "zod";
@@ -50,26 +49,32 @@ const AddUrbanTransportation = () => {
       const validated = urbanTransportSchema.parse(formData);
       setLoading(true);
 
-      const { error } = await supabase
-        .from("urban_transportation")
-        .insert([
-          {
-            route_name: validated.route_name,
-            origin: validated.origin,
-            destination: validated.destination,
-            transport_type: validated.transport_type,
-            departure_time: validated.departure_time,
-            arrival_time: validated.arrival_time,
-            trip_date: validated.trip_date,
-            price: parseFloat(validated.price),
-            duration: validated.duration,
-            available_seats: parseInt(validated.available_seats),
-            description: formData.description || null,
-          },
-        ]);
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:4000/api/urban-transportation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          route_name: validated.route_name,
+          origin: validated.origin,
+          destination: validated.destination,
+          transport_type: validated.transport_type,
+          departure_time: validated.departure_time,
+          arrival_time: validated.arrival_time,
+          trip_date: validated.trip_date,
+          price: parseFloat(validated.price),
+          duration: validated.duration,
+          available_seats: parseInt(validated.available_seats),
+          description: formData.description || null,
+        }),
+      });
 
-      if (error) {
-        toast.error(error.message || "Failed to add urban transportation route");
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || "Failed to add urban transportation route");
       } else {
         toast.success("Urban transportation route added successfully!");
         setFormData({

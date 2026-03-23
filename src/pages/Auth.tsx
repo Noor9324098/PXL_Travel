@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,19 +21,11 @@ const Auth = () => {
   const lottieRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/search");
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      if (session) {
-        navigate("/search");
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    // Check if user is already logged in (check localStorage for token)
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate("/search");
+    }
   }, [navigate]);
 
   useEffect(() => {
@@ -96,23 +87,33 @@ const Auth = () => {
       const validated = signInSchema.parse(signInData);
       setLoading(true);
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email: validated.email,
-        password: validated.password,
+      const response = await fetch('http://localhost:4000/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: validated.email,
+          password: validated.password,
+        }),
       });
 
-      if (error) {
-        if (error.message.includes("Invalid login credentials")) {
-          toast.error("Invalid email or password");
-        } else {
-          toast.error(error.message);
-        }
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || 'Sign in failed');
       } else {
+        // Store token in localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         toast.success("Signed in successfully!");
+        navigate("/search");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
+      } else {
+        toast.error('An error occurred during sign in');
       }
     } finally {
       setLoading(false);

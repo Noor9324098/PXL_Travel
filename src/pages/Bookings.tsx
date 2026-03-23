@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Plane, Calendar, Clock, Phone, CreditCard } from "lucide-react";
@@ -26,8 +25,8 @@ const Bookings = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      const token = localStorage.getItem('token');
+      if (!token) {
         toast.error("Please sign in to view your bookings");
         navigate("/auth");
         return;
@@ -40,12 +39,18 @@ const Bookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:4000/api/bookings', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to fetch bookings');
+      }
+
+      const data = await response.json();
       setBookings(data || []);
     } catch (error: any) {
       toast.error("Error loading bookings");

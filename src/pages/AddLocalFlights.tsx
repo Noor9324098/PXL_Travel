@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { Plane, ArrowLeft, Loader2, Plus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { z } from "zod";
@@ -48,25 +47,31 @@ const AddLocalFlights = () => {
       const validated = localFlightSchema.parse(formData);
       setLoading(true);
 
-      const { error } = await supabase
-        .from("local_flights")
-        .insert([
-          {
-            origin: validated.origin,
-            destination: validated.destination,
-            airline: validated.airline,
-            departure_time: validated.departure_time,
-            arrival_time: validated.arrival_time,
-            flight_date: validated.flight_date,
-            price: parseFloat(validated.price),
-            duration: validated.duration,
-            available_seats: parseInt(validated.available_seats),
-            description: formData.description || null,
-          },
-        ]);
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:4000/api/local-flights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          origin: validated.origin,
+          destination: validated.destination,
+          airline: validated.airline,
+          departure_time: validated.departure_time,
+          arrival_time: validated.arrival_time,
+          flight_date: validated.flight_date,
+          price: parseFloat(validated.price),
+          duration: validated.duration,
+          available_seats: parseInt(validated.available_seats),
+          description: formData.description || null,
+        }),
+      });
 
-      if (error) {
-        toast.error(error.message || "Failed to add local flight");
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || "Failed to add local flight");
       } else {
         toast.success("Local flight added successfully!");
         setFormData({

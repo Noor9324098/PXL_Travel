@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Upload, Plane, User, Phone, CreditCard, FileText } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
 const bookingSchema = z.object({
@@ -20,10 +19,7 @@ const Booking = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [passportFile, setPassportFile] = useState<File | null>(null);
-  const [passportPreview, setPassportPreview] = useState<string | null>(null);
   const [bookingData, setBookingData] = useState({
     passengerName: "",
     phoneNumber: "",
@@ -33,14 +29,14 @@ const Booking = () => {
   const flight = location.state?.flight;
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        toast.error("Please sign in to book a flight");
-        navigate("/auth");
-      } else {
-        setUser(session.user);
-      }
-    });
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    if (!token || !userStr) {
+      toast.error("Please sign in to book a flight");
+      navigate("/auth");
+    } else {
+      setUser(JSON.parse(userStr));
+    }
   }, [navigate]);
 
   if (!flight) {
@@ -55,49 +51,6 @@ const Booking = () => {
     );
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        toast.error("Please upload an image file");
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size must be less than 5MB");
-        return;
-      }
-      setPassportFile(file);
-      setPassportPreview(URL.createObjectURL(file));
-    }
-  };
-
-  const uploadPassport = async (userId: string): Promise<string | null> => {
-    if (!passportFile) return null;
-
-    setUploading(true);
-    try {
-      const fileExt = passportFile.name.split('.').pop();
-      const fileName = `${userId}/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('passports')
-        .upload(fileName, passportFile);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('passports')
-        .getPublicUrl(fileName);
-
-      return publicUrl;
-    } catch (error: any) {
-      toast.error("Error uploading passport image");
-      return null;
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -106,39 +59,35 @@ const Booking = () => {
       return;
     }
 
-    if (!passportFile) {
-      toast.error("Please upload your passport image");
-      return;
-    }
-
     try {
       const validated = bookingSchema.parse(bookingData);
       setLoading(true);
 
-      const passportUrl = await uploadPassport(user.id);
-      if (!passportUrl) {
-        setLoading(false);
-        return;
-      }
-
-      const { error } = await supabase
-        .from('bookings')
-        .insert({
-          user_id: user.id,
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:4000/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
           flight_origin: flight.origin,
           flight_destination: flight.destination,
           flight_date: flight.date,
           passenger_name: validated.passengerName,
           phone_number: validated.phoneNumber,
-          passport_image_url: passportUrl,
           transaction_number: validated.transactionNumber,
-          status: 'pending',
-        });
+        }),
+      });
 
-      if (error) throw error;
+      const data = await response.json();
 
-      toast.success("Booking submitted successfully! Our agency will contact you soon.");
-      navigate("/bookings");
+      if (!response.ok) {
+        toast.error(data.error || 'Error submitting booking');
+      } else {
+        toast.success("Booking submitted successfully! Our agency will contact you soon.");
+        navigate("/bookings");
+      }
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
@@ -252,61 +201,20 @@ const Booking = () => {
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="passport" className="flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      Passport Photo/ID
-                    </Label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-6 hover:border-primary/50 transition-colors">
-                      <input
-                        id="passport"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                        required
-                      />
-                      <label
-                        htmlFor="passport"
-                        className="flex flex-col items-center gap-2 cursor-pointer"
-                      >
-                        {passportPreview ? (
-                          <div className="relative">
-                            <img
-                              src={passportPreview}
-                              alt="Passport preview"
-                              className="max-h-48 rounded-lg"
-                            />
-                            <p className="text-sm text-muted-foreground mt-2">Click to change</p>
-                          </div>
-                        ) : (
-                          <>
-                            <Upload className="w-10 h-10 text-muted-foreground" />
-                            <div className="text-center">
-                              <p className="font-medium">Click to upload passport image</p>
-                              <p className="text-sm text-muted-foreground">PNG, JPG up to 5MB</p>
-                            </div>
-                          </>
-                        )}
-                      </label>
-                    </div>
-                  </div>
-
                   <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                     <p className="text-sm font-medium">Important Information:</p>
                     <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                       <li>Ensure your passport is valid for at least 6 months</li>
-                      <li>Provide a clear, readable photo of your passport</li>
                       <li>Our agency will contact you within 24 hours</li>
                       <li>Payment arrangements will be confirmed before booking</li>
                     </ul>
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={loading || uploading}>
-                    {loading || uploading ? (
+                  <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                    {loading ? (
                       <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        {uploading ? "Uploading..." : "Submitting..."}
+                        Submitting...
                       </>
                     ) : (
                       "Submit Booking Request"

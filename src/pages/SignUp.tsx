@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,19 +24,11 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/search");
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      if (session) {
-        navigate("/search");
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    // Check if user is already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate("/search");
+    }
   }, [navigate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -47,29 +38,35 @@ const SignUp = () => {
       const validated = signUpSchema.parse(signUpData);
       setLoading(true);
 
-      const { error } = await supabase.auth.signUp({
-        email: validated.email,
-        password: validated.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/search`,
-          data: {
-            full_name: validated.fullName,
-          },
+      const response = await fetch('http://localhost:4000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          email: validated.email,
+          password: validated.password,
+          full_name: validated.fullName,
+        }),
       });
 
-      if (error) {
-        if (error.message.includes("already registered")) {
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error.includes("already registered") || data.error.includes("duplicate")) {
           toast.error("This email is already registered. Please sign in instead.");
         } else {
-          toast.error(error.message);
+          toast.error(data.error);
         }
       } else {
-        toast.success("Account created successfully! You can now search for flights.");
+        toast.success("Account created successfully! You can now sign in.");
+        navigate("/auth");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
+      } else {
+        toast.error('An error occurred during sign up');
       }
     } finally {
       setLoading(false);

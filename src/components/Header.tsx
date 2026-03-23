@@ -1,37 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Menu, Shield } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
-import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { isAdmin } from "@/lib/admin";
+
+interface User {
+  id: string;
+  email: string;
+  full_name: string;
+  is_admin?: boolean;
+  is_super_admin?: boolean;
+}
 
 export const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    if (token && userStr) {
+      setUser(JSON.parse(userStr));
+    }
   }, []);
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Error signing out");
-    } else {
-      toast.success("Signed out successfully");
-      navigate("/");
-    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    toast.success("Signed out successfully");
+    navigate("/");
   };
 
   const handleHome = () => {

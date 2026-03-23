@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { isAdmin } from "@/lib/admin";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -17,16 +16,17 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   useEffect(() => {
     const checkAdminAccess = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
+        const token = localStorage.getItem('token');
+        const userStr = localStorage.getItem('user');
+
+        if (!token || !userStr) {
           toast.error("You must be signed in to access this page");
           navigate("/auth");
           return;
         }
 
-        const userEmail = session.user.email;
-        if (!isAdmin(userEmail)) {
+        const user = JSON.parse(userStr);
+        if (!isAdmin(user.email)) {
           toast.error("Access denied. Admin privileges required.");
           navigate("/");
           return;

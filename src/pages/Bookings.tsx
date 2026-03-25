@@ -11,7 +11,8 @@ interface Booking {
   flight_origin: string;
   flight_destination: string;
   flight_date: string;
-  passenger_name: string;
+  passenger_first_name: string;
+  passenger_last_name: string;
   phone_number: string;
   transaction_number: string;
   status: string;
@@ -157,7 +158,7 @@ const Bookings = () => {
                     
                     <div className="mt-4 pt-4 border-t">
                       <p className="text-sm text-muted-foreground">Passenger Name</p>
-                      <p className="font-semibold">{booking.passenger_name}</p>
+                      <p className="font-semibold">{booking.passenger_last_name + booking.passenger_first_name}</p>
                     </div>
                   </CardContent>
                 </Card>

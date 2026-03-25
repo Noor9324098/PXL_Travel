@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import {FlightCard} from "@/components/ui/FlightCard"
 import { Loader2, Upload, Plane, User, Phone, CreditCard, FileText } from "lucide-react";
 import { z } from "zod";
 
 const bookingSchema = z.object({
-  passengerName: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
+  passengerFirstName: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
+  passengerLastName: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
   phoneNumber: z.string().trim().min(10, { message: "Phone number must be at least 10 digits" }).max(20),
   transactionNumber: z.string().trim().min(5, { message: "Transaction number must be at least 5 characters" }).max(50),
 });
@@ -21,7 +23,8 @@ const Booking = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [bookingData, setBookingData] = useState({
-    passengerName: "",
+    passengerFirstName:"",
+    passengerLastName: "",
     phoneNumber: "",
     transactionNumber: "",
   });
@@ -74,7 +77,8 @@ const Booking = () => {
           flight_origin: flight.origin,
           flight_destination: flight.destination,
           flight_date: flight.date,
-          passenger_name: validated.passengerName,
+          passenger_last_name: validated.passengerLastName,
+          passenger_first_name: validated.passengerFirstName,
           phone_number: validated.phoneNumber,
           transaction_number: validated.transactionNumber,
         }),
@@ -110,119 +114,114 @@ const Booking = () => {
             <p className="text-muted-foreground">Fill in your details to confirm your flight reservation</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Flight Details */}
-            <Card className="lg:col-span-1 border-2 h-fit animate-slide-up">
-              <CardHeader>
-                <CardTitle className="font-display flex items-center gap-2">
-                  <Plane className="w-5 h-5 text-primary" />
-                  Flight Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <p className="text-sm text-muted-foreground">Airline</p>
-                  <p className="font-semibold">{flight.airline}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">From</p>
-                  <p className="font-semibold">{flight.origin}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">To</p>
-                  <p className="font-semibold">{flight.destination}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="font-semibold">{flight.date}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Duration</p>
-                  <p className="font-semibold">{flight.duration}</p>
-                </div>
-                <div className="pt-3 border-t">
-                  <p className="text-sm text-muted-foreground">Price</p>
-                  <p className="font-display text-2xl font-bold text-primary">{flight.price}</p>
-                </div>
-              </CardContent>
-            </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <div className="lg:col-span-1 animate-slide-up">
+    <FlightCard flight={flight} />
+  </div>
 
-            {/* Booking Form */}
-            <Card className="lg:col-span-2 border-2 shadow-large animate-slide-up" style={{ animationDelay: "0.1s" }}>
-              <CardHeader>
-                <CardTitle className="font-display text-2xl">Passenger Information</CardTitle>
-                <CardDescription>Please provide accurate information for your booking</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="passengerName" className="flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      Full Name (as on passport)
-                    </Label>
-                    <Input
-                      id="passengerName"
-                      placeholder="John Doe"
-                      value={bookingData.passengerName}
-                      onChange={(e) => setBookingData({ ...bookingData, passengerName: e.target.value })}
-                      required
-                    />
-                  </div>
+  <Card
+    className="lg:col-span-2 border-2 shadow-large animate-slide-up"
+    style={{ animationDelay: "0.1s" }}
+  >
+    <CardHeader>
+      <CardTitle className="font-display text-2xl">Passenger Information</CardTitle>
+      <CardDescription>Please provide accurate information for your booking</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="passengerFirstName" className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            First Name (as on passport)
+          </Label>
+          <Input
+            id="passengerFirstName"
+            placeholder="John"
+            value={bookingData.passengerFirstName}
+            onChange={(e) =>
+              setBookingData({ ...bookingData, passengerFirstName: e.target.value })
+            }
+            required
+          />
+        </div>
+         <div className="space-y-2">
+          <Label htmlFor="passengerLastName" className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            Last Name (as on passport)
+          </Label>
+          <Input
+            id="passengerLastName"
+            placeholder="Doe"
+            value={bookingData.passengerLastName}
+            onChange={(e) =>
+              setBookingData({ ...bookingData, passengerLastName: e.target.value })
+            }
+            required
+          />
+        </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phoneNumber" className="flex items-center gap-2">
-                      <Phone className="w-4 h-4" />
-                      Phone Number
-                    </Label>
-                    <Input
-                      id="phoneNumber"
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      value={bookingData.phoneNumber}
-                      onChange={(e) => setBookingData({ ...bookingData, phoneNumber: e.target.value })}
-                      required
-                    />
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="transactionNumber" className="flex items-center gap-2">
-                      <CreditCard className="w-4 h-4" />
-                      Transaction Number
-                    </Label>
-                    <Input
-                      id="transactionNumber"
-                      placeholder="TXN123456789"
-                      value={bookingData.transactionNumber}
-                      onChange={(e) => setBookingData({ ...bookingData, transactionNumber: e.target.value })}
-                      required
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      Reference number for payment made to local agency
-                    </p>
-                  </div>
+        <div className="space-y-2">
+          <Label htmlFor="phoneNumber" className="flex items-center gap-2">
+            <Phone className="w-4 h-4" />
+            Phone Number
+          </Label>
+          <Input
+            id="phoneNumber"
+            type="tel"
+            placeholder="+1 (555) 123-4567"
+            value={bookingData.phoneNumber}
+            onChange={(e) =>
+              setBookingData({ ...bookingData, phoneNumber: e.target.value })
+            }
+            required
+          />
+        </div>
 
-                  <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                    <p className="text-sm font-medium">Important Information:</p>
-                    <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                      <li>Ensure your passport is valid for at least 6 months</li>
-                      <li>Our agency will contact you within 24 hours</li>
-                      <li>Payment arrangements will be confirmed before booking</li>
-                    </ul>
-                  </div>
+        <div className="space-y-2">
+          <Label htmlFor="transactionNumber" className="flex items-center gap-2">
+            <CreditCard className="w-4 h-4" />
+            Transaction Number
+          </Label>
+          <Input
+            id="transactionNumber"
+            placeholder="TXN123456789"
+            value={bookingData.transactionNumber}
+            onChange={(e) =>
+              setBookingData({
+                ...bookingData,
+                transactionNumber: e.target.value,
+              })
+            }
+            required
+          />
+          <p className="text-sm text-muted-foreground">
+            Reference number for payment made to local agency
+          </p>
+        </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      "Submit Booking Request"
-                    )}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+          <p className="text-sm font-medium">Important Information:</p>
+          <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+            <li>Ensure your passport is valid for at least 6 months</li>
+            <li>Our agency will contact you within 24 hours</li>
+            <li>Payment arrangements will be confirmed before booking</li>
+          </ul>
+        </div>
+
+        <Button type="submit" className="w-full" size="lg" disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            "Submit Booking Request"
+          )}
+        </Button>
+      </form>
+    </CardContent>
+  </Card>
           </div>
         </div>
       </main>

@@ -76,6 +76,7 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
   - MONGODB_URI - MongoDB connection string
   - JWT_SECRET - JWT signing secret
   - GROQ_API_KEY - AI chat API key
+  - GROQ_MODEL - Optional Groq model override (default: llama-3.3-70b-versatile)
   - PORT - Server port (default 4000)
 
 - **Setup Files**:
@@ -103,6 +104,8 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
 
 ### Recent Changes
 - **Flight Search Authentication**: Added authentication requirement for flight search functionality - users must sign in to access flight search
+- **AI Chat Error Handling**: Improved chat error parsing and added sanitized user-facing error categories for connectivity, configuration, request, and provider failures
+- **Groq Model Update**: Replaced deprecated model with configurable `GROQ_MODEL` and defaulted to `llama-3.3-70b-versatile`
 
 ### Next Steps
 1. Implement full backend deployment

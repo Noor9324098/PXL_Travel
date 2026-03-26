@@ -232,7 +232,7 @@ app.put('/api/users/:id/admin', authenticate, async (req, res) => {
 // AI Chat endpoint (Groq proxy, OpenAI-compatible)
 app.post('/api/chat', async (req, res) => {
   try {
-    const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       return res.status(500).json({ error: 'GROQ_API_KEY is not configured on the server' });
     }
@@ -242,11 +242,12 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'messages array is required' });
     }
 
+    const groqModel = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
-        // Use a Groq-supported model (OpenAI-compatible API)
-        model: 'llama-3.1-70b-versatile',
+        model: groqModel,
         messages: [
           {
             role: 'system',

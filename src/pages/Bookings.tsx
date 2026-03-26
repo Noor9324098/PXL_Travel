@@ -158,7 +158,7 @@ const Bookings = () => {
                     
                     <div className="mt-4 pt-4 border-t">
                       <p className="text-sm text-muted-foreground">Passenger Name</p>
-                      <p className="font-semibold">{booking.passenger_last_name + booking.passenger_first_name}</p>
+                      <p className="font-semibold">{booking.passenger_last_name +" "+ booking.passenger_first_name}</p>
                     </div>
                   </CardContent>
                 </Card>

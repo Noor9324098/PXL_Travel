@@ -10,6 +10,56 @@ type ChatMessage = {
   content: string;
 };
 
+type ChatRequestError = Error & {
+  status?: number;
+  rawMessage?: string;
+};
+
+const extractErrorMessage = (errorBody: unknown): string | null => {
+  if (typeof errorBody === "string") return errorBody;
+
+  if (errorBody && typeof errorBody === "object") {
+    const body = errorBody as {
+      error?: string | { message?: string };
+      message?: string;
+    };
+
+    if (typeof body.error === "string") return body.error;
+    if (body.error && typeof body.error === "object" && typeof body.error.message === "string") {
+      return body.error.message;
+    }
+    if (typeof body.message === "string") return body.message;
+  }
+
+  return null;
+};
+
+const toSanitizedChatError = (rawMessage: string, status?: number): string => {
+  const normalized = rawMessage.toLowerCase();
+
+  if (
+    normalized.includes("failed to fetch") ||
+    normalized.includes("networkerror") ||
+    normalized.includes("err_connection")
+  ) {
+    return "Cannot reach the AI service right now. Please make sure the backend server is running and try again.";
+  }
+
+  if (normalized.includes("groq_api_key") || normalized.includes("not configured")) {
+    return "AI assistant is temporarily unavailable due to a server configuration issue.";
+  }
+
+  if (status === 400 || normalized.includes("messages array is required")) {
+    return "Your request could not be processed. Please try again with a shorter or clearer message.";
+  }
+
+  if ((status && status >= 500) || normalized.includes("unexpected error while talking to the ai")) {
+    return "AI service is temporarily unavailable. Please try again in a moment.";
+  }
+
+  return "There was an issue contacting the AI assistant. Please try again shortly.";
+};
+
 const Index = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -23,25 +73,34 @@ const Index = () => {
   const [isSending, setIsSending] = useState(false);
 
   const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = input.trim();
-    if (!trimmed || isSending) return;
+    e.preventDefault(); //Prevents the form from reloading the page when you press send (Like stopping the app from closing when you hit Enter)
 
-    const userMessage: ChatMessage = { role: "user", content: trimmed };
-    const nextMessages = [...messages, userMessage];
+    const trimmed = input.trim(); //Removes spaces Example: "   hello   " → "hello"
+
+    if (!trimmed || isSending) return; //Don’t send if: message is empty or already sending another message
+
+    const userMessage: ChatMessage = { role: "user", content: trimmed }; //Immediately shows your message in the chat, Like: You see your message appear before the reply comes
+
+
+
+
+    const nextMessages = [...messages, userMessage]; //Clears textbox and prevents spam clicking
     setMessages(nextMessages);
     setInput("");
     setIsSending(true);
 
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+      const apiBase =  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000"; //production URL if available, otherwise local server
 
-      const response = await fetch(`${apiBase}/api/chat`, {
+
+      const response = await fetch(`${apiBase}/api/chat`, { //Sends request to your server
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
+        body: JSON.stringify({  //Sends entire conversation, not just one message so AI remembers previous messages
+
+
           messages: nextMessages.map((m) => ({
             role: m.role,
             content: m.content,
@@ -53,23 +112,36 @@ const Index = () => {
         let errorMessage = "Failed to contact AI";
         try {
           const errorBody = await response.json();
-          if (errorBody?.error?.message) {
-            errorMessage = errorBody.error.message;
-          } else if (typeof errorBody === "string") {
-            errorMessage = errorBody;
+          const parsedError = extractErrorMessage(errorBody);
+          if (parsedError) {
+            errorMessage = parsedError;
           }
         } catch {
-          // ignore JSON parse errors, fall back to status text
-          if (response.statusText) {
-            errorMessage = response.statusText;
+          // Ignore JSON parse errors and try plain text fallback.
+          try {
+            const errorText = await response.text();
+            if (errorText.trim()) {
+              errorMessage = errorText;
+            } else if (response.statusText) {
+              errorMessage = response.statusText;
+            }
+          } catch {
+            if (response.statusText) {
+              errorMessage = response.statusText;
+            }
           }
         }
-        throw new Error(errorMessage);
+
+        const requestError: ChatRequestError = new Error(errorMessage);
+        requestError.status = response.status;
+        requestError.rawMessage = errorMessage;
+        throw requestError;
       }
 
       const data = await response.json();
-      const replyContent: string =
-        data?.reply?.trim() || "Sorry, I couldn't generate a reply. Please try again.";
+      const replyContent: string = // Use AI reply OR fallback if empty
+        data?.reply?.trim() ||
+        "Sorry, I couldn't generate a reply. Please try again.";
 
       setMessages((prev) => [
         ...prev,
@@ -79,20 +151,25 @@ const Index = () => {
         },
       ]);
     } catch (error) {
-      // Log full error for debugging in the browser console
+      const requestError = error as ChatRequestError;
+      const rawMessage =
+        requestError?.rawMessage ||
+        (requestError instanceof Error ? requestError.message : "Unknown error");
+      const sanitizedMessage = toSanitizedChatError(rawMessage, requestError?.status);
+
+      // Log technical details for debugging while keeping user-facing errors sanitized.
       // eslint-disable-next-line no-console
-      console.error("PXL AI chat error:", error);
+      console.error("PXL AI chat error:", {
+        rawMessage,
+        status: requestError?.status,
+        error,
+      });
 
-      const message =
-        error instanceof Error && error.message
-          ? error.message
-          : "There was an error talking to the AI. Please try again in a moment.";
-
-      setMessages((prev) => [
+      setMessages((prev) => [ //Adds AI message to chat, Adds AI message to chat
         ...prev,
         {
           role: "assistant",
-          content: `There was an error talking to the AI: ${message}`,
+          content: sanitizedMessage,
         },
       ]);
     } finally {
@@ -154,7 +231,10 @@ const Index = () => {
             ))}
           </div>
 
-          <form onSubmit={handleSend} className="border-t border-border px-2 py-2 flex gap-2">
+          <form
+            onSubmit={handleSend}
+            className="border-t border-border px-2 py-2 flex gap-2"
+          >
             <input
               type="text"
               value={input}

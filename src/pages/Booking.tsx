@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import {FlightCard} from "@/components/ui/FlightCard"
+// import {FlightCard} from "@/components/ui/FlightCard"
 import { Loader2, Upload, Plane, User, Phone, CreditCard, FileText } from "lucide-react";
 import { z } from "zod";
+import { API_BASE_URL } from "@/lib/api";
 
 const bookingSchema = z.object({
   passengerFirstName: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
@@ -67,7 +68,7 @@ const Booking = () => {
       setLoading(true);
 
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/api/bookings', {
+      const response = await fetch(`${API_BASE_URL}/api/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +117,7 @@ const Booking = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
   <div className="lg:col-span-1 animate-slide-up">
-    <FlightCard flight={flight} />
+    {/* <FlightCard flight={flight} /> */}
   </div>
 
   <Card

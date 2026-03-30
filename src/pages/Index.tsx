@@ -4,6 +4,7 @@ import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Footer } from "@/components/Footer";
 import { MessageCircle, X, Send } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -90,7 +91,7 @@ const Index = () => {
     setIsSending(true);
 
     try {
-      const apiBase =  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000"; //production URL if available, otherwise local server
+      const apiBase =  `${API_BASE_URL}/api/chat`; //production URL if available, otherwise local server
 
 
       const response = await fetch(`${apiBase}/api/chat`, { //Sends request to your server

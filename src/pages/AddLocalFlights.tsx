@@ -11,7 +11,7 @@ import { Plane, ArrowLeft, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { z } from "zod";
-
+import { API_BASE_URL } from "@/lib/api";
 const localFlightSchema = z.object({
   origin: z.string().min(1, "Origin is required"),
   destination: z.string().min(1, "Destination is required"),
@@ -48,7 +48,7 @@ const AddLocalFlights = () => {
       setLoading(true);
 
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/api/local-flights', {
+      const response = await fetch(`${API_BASE_URL}/api/local-flights`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

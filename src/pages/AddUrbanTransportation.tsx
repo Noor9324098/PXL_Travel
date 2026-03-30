@@ -11,6 +11,7 @@ import { Bus, ArrowLeft, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { z } from "zod";
+import { API_BASE_URL } from "@/lib/api";
 
 const urbanTransportSchema = z.object({
   route_name: z.string().min(1, "Route name is required"),
@@ -50,7 +51,7 @@ const AddUrbanTransportation = () => {
       setLoading(true);
 
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/api/urban-transportation', {
+      const response = await fetch(`${API_BASE_URL}/api/urban-transportation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

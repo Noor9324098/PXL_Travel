@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Plane, Calendar, Clock, Phone, CreditCard } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Booking {
   id: string;
@@ -41,7 +42,7 @@ const Bookings = () => {
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/api/bookings', {
+      const response = await fetch(`${API_BASE_URL}/api/bookings`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

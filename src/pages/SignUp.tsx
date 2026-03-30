@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Home, Eye, EyeOff, HelpCircle } from "lucide-react";
 import { z } from "zod";
+import { API_BASE_URL } from "@/lib/api";
 
 const signUpSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
@@ -38,7 +39,7 @@ const SignUp = () => {
       const validated = signUpSchema.parse(signUpData);
       setLoading(true);
 
-      const response = await fetch('http://localhost:4000/api/auth/signup', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,10 +54,16 @@ const SignUp = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        if (data.error.includes("already registered") || data.error.includes("duplicate")) {
+        const errorMessage =
+          typeof data?.error === "string" ? data.error : "Sign up failed";
+
+        if (
+          errorMessage.toLowerCase().includes("already registered") ||
+          errorMessage.toLowerCase().includes("duplicate")
+        ) {
           toast.error("This email is already registered. Please sign in instead.");
         } else {
-          toast.error(data.error);
+          toast.error(errorMessage);
         }
       } else {
         toast.success("Account created successfully! You can now sign in.");
@@ -66,7 +73,7 @@ const SignUp = () => {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
       } else {
-        toast.error('An error occurred during sign up');
+        toast.error("Unable to reach sign-up service. Make sure backend is running on port 4000.");
       }
     } finally {
       setLoading(false);

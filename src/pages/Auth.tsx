@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Home, Eye, EyeOff, HelpCircle } from "lucide-react";
 import { z } from "zod";
+import { API_BASE_URL } from "@/lib/api";
 
 const signInSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -87,7 +88,7 @@ const Auth = () => {
       const validated = signInSchema.parse(signInData);
       setLoading(true);
 
-      const response = await fetch('http://localhost:4000/api/auth/signin', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

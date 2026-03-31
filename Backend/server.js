@@ -10,6 +10,7 @@ const axios = require("axios");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 
+const { getAirports } = require("./services/aviationstack");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -314,6 +315,67 @@ app.post('/api/chat', async (req, res) => {
       error.message ||
       'Unexpected error while talking to the AI.';
     res.status(500).json({ error: message });
+  }
+});
+
+//FlightSearch
+
+app.get("/api/aviationstack/search-flights", async (req, res) => {
+  try {
+    const { dep_iata, arr_iata,/* date*/ } = req.query;
+
+    if (!dep_iata || !arr_iata /*|| !date*/) {
+      return res.status(400).json({
+        error: "dep_iata, arr_iata, and date are required",
+      });
+    }
+
+    const apiKey = process.env.AVIATIONSTACK_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: "AVIATIONSTACK_API_KEY is not configured on the server",
+      });
+    }
+
+   const response = await axios.get("https://api.aviationstack.com/v1/flights", {
+  params: {
+    access_key: apiKey,
+    dep_iata,
+    arr_iata,
+    limit: 20,
+  },
+});
+
+    const rawFlights = response.data?.data || [];
+
+    const mappedFlights = rawFlights.map((item) => ({
+      id: item.flight?.iata || `${item.flight_date}-${item.flight?.number || Math.random()}`,
+      origin: item.departure?.airport || item.departure?.iata || "Unknown",
+      destination: item.arrival?.airport || item.arrival?.iata || "Unknown",
+      date: item.flight_date || "",
+      airline: item.airline?.name || "Unknown Airline",
+      duration: "N/A",
+      price: "Contact agency",
+      departureTime: item.departure?.scheduled || "",
+      arrivalTime: item.arrival?.scheduled || "",
+      status: item.flight_status || "unknown",
+    }));
+
+    res.json(mappedFlights);
+  } catch (error) {
+    console.error(
+      "aviationstack /search-flights error:",
+      error.response?.data || error.message || error
+    );
+
+    const apiError = error.response?.data?.error;
+
+    res.status(error.response?.status || 500).json({
+      error:
+        apiError?.message ||
+        "Unable to fetch flights from aviationstack",
+    });
   }
 });
 const PORT = process.env.PORT || 4000;

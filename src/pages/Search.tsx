@@ -3,139 +3,160 @@ import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Search as SearchIcon, Plane, Clock, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-// Mock flight data
-const mockFlights = [
-  {
-    id: "1",
-    origin: "New York (JFK)",
-    destination: "London (LHR)",
-    date: "2024-03-15",
-    airline: "British Airways",
-    duration: "7h 30m",
-    price: "$650",
-    departureTime: "10:00 AM",
-    arrivalTime: "10:30 PM"
-  },
-  {
-    id: "2",
-    origin: "New York (JFK)",
-    destination: "London (LHR)",
-    date: "2024-03-15",
-    airline: "Virgin Atlantic",
-    duration: "7h 15m",
-    price: "$720",
-    departureTime: "2:00 PM",
-    arrivalTime: "2:15 AM"
-  },
-  {
-    id: "3",
-    origin: "New York (JFK)",
-    destination: "London (LHR)",
-    date: "2024-03-15",
-    airline: "American Airlines",
-    duration: "7h 45m",
-    price: "$590",
-    departureTime: "8:00 PM",
-    arrivalTime: "8:45 AM"
-  }
-];
+import { Flight } from "@/types/flight";
+import { API_BASE_URL } from "@/lib/api";
 
 const Search = () => {
   const navigate = useNavigate();
+
   const [searchData, setSearchData] = useState({
     origin: "",
     destination: "",
-    date: ""
+    // date: "",
   });
-  const [flights, setFlights] = useState(mockFlights);
+
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
+    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
 
     if (!token || !userStr) {
       toast.error("Please sign in to search for flights");
       navigate("/auth");
-      return;
     }
   }, [navigate]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Mock search - in real app would fetch from API
-    setFlights(mockFlights);
-  };
+ const handleFlightSearch = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleBookFlight = (flight: typeof mockFlights[0]) => {
+  if (!searchData.origin || !searchData.destination /*|| !searchData.date*/) {
+    toast.error("Please fill in origin, destination, and date");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/aviationstack/search-flights?dep_iata=${encodeURIComponent(
+        searchData.origin
+      )}&arr_iata=${encodeURIComponent(
+        searchData.destination)}`
+    );
+
+    const data: Flight[] = await response.json();
+
+    if (!response.ok) {
+      throw new Error((data as any)?.error || "Failed to fetch flights");
+    }
+
+    setFlights(data);
+
+    if (data.length === 0) {
+      toast.error("No flights found");
+    }
+  } catch (error: any) {
+    toast.error(error.message || "Unable to fetch flights");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const handleBookFlight = (flight: Flight) => {
     navigate("/booking", { state: { flight } });
+  
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-6">
-          {/* Search Form */}
           <Card className="mb-12 border-2 shadow-large">
             <CardHeader>
               <CardTitle className="font-display text-3xl flex items-center gap-2">
                 <SearchIcon className="w-8 h-8 text-primary" />
                 Search Flights
               </CardTitle>
-              <CardDescription>Find your perfect flight with AI-powered recommendations</CardDescription>
+              <CardDescription>
+                Find your perfect flight with PXL Travel
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <form
+                onSubmit={handleFlightSearch}
+                className="grid grid-cols-1 md:grid-cols-4 gap-4"
+              >
                 <div className="space-y-2">
                   <Label htmlFor="origin">Origin</Label>
                   <Input
                     id="origin"
                     placeholder="New York (JFK)"
                     value={searchData.origin}
-                    onChange={(e) => setSearchData({ ...searchData, origin: e.target.value })}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, origin: e.target.value })
+                    }
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="destination">Destination</Label>
                   <Input
                     id="destination"
                     placeholder="London (LHR)"
                     value={searchData.destination}
-                    onChange={(e) => setSearchData({ ...searchData, destination: e.target.value })}
+                    onChange={(e) =>
+                      setSearchData({
+                        ...searchData,
+                        destination: e.target.value,
+                      })
+                    }
                   />
                 </div>
-                <div className="space-y-2">
+
+                {/* <div className="space-y-2">
                   <Label htmlFor="date">Date</Label>
                   <Input
                     id="date"
                     type="date"
                     value={searchData.date}
-                    onChange={(e) => setSearchData({ ...searchData, date: e.target.value })}
+                    onChange={(e) =>
+                      setSearchData({ ...searchData, date: e.target.value })
+                    }
                   />
-                </div>
+                </div> */}
+
                 <div className="flex items-end">
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full" disabled={loading}>
                     <SearchIcon className="w-4 h-4 mr-2" />
-                    Search
+                    {loading ? "Searching..." : "Search"}
                   </Button>
                 </div>
               </form>
             </CardContent>
           </Card>
 
-          {/* Results */}
           <div className="space-y-4">
-            <h2 className="font-display text-2xl font-semibold mb-6">Available Flights</h2>
+            <h2 className="font-display text-2xl font-semibold mb-6">
+              Available Flights
+            </h2>
+
             {flights.map((flight, index) => (
-              <Card 
-                key={flight.id} 
+              <Card
+                key={flight.id}
                 className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-medium animate-slide-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
@@ -147,8 +168,12 @@ const Search = () => {
                           <Plane className="w-6 h-6 text-primary-foreground" />
                         </div>
                         <div>
-                          <h3 className="font-display text-xl font-semibold">{flight.airline}</h3>
-                          <p className="text-sm text-muted-foreground">{flight.date}</p>
+                          <h3 className="font-display text-xl font-semibold">
+                            {flight.airline}
+                          </h3>
+                          {/* <p className="text-sm text-muted-foreground">
+                            {flight.date}
+                          </p> */}
                         </div>
                       </div>
 
@@ -156,18 +181,26 @@ const Search = () => {
                         <div>
                           <p className="text-sm text-muted-foreground">From</p>
                           <p className="font-semibold">{flight.origin}</p>
-                          <p className="text-sm text-muted-foreground">{flight.departureTime}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {flight.departureTime}
+                          </p>
                         </div>
+
                         <div className="flex items-center justify-center">
                           <div className="flex flex-col items-center gap-2">
                             <Clock className="w-5 h-5 text-primary" />
-                            <p className="text-sm text-muted-foreground">{flight.duration}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {flight.duration}
+                            </p>
                           </div>
                         </div>
+
                         <div>
                           <p className="text-sm text-muted-foreground">To</p>
                           <p className="font-semibold">{flight.destination}</p>
-                          <p className="text-sm text-muted-foreground">{flight.arrivalTime}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {flight.arrivalTime}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -175,9 +208,14 @@ const Search = () => {
                     <div className="flex flex-col items-center gap-3 md:border-l md:pl-6">
                       <div className="flex items-center gap-2">
                         <DollarSign className="w-5 h-5 text-accent" />
-                        <span className="font-display text-3xl font-bold text-primary">{flight.price}</span>
+                        <span className="font-display text-3xl font-bold text-primary">
+                          {flight.price}
+                        </span>
                       </div>
-                      <Button onClick={() => handleBookFlight(flight)} className="w-full md:w-auto">
+                      <Button
+                        onClick={() => handleBookFlight(flight)}
+                        className="w-full md:w-auto"
+                      >
                         Book Flight
                       </Button>
                     </div>

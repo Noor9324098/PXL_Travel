@@ -143,7 +143,7 @@ const Auth = () => {
       <div 
         className="w-full md:w-1/2 flex items-center justify-center h-screen relative overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, #E97528 0%, rgba(233, 117, 40, 0.85) 25%, rgba(233, 117, 40, 0.7) 50%, rgba(233, 117, 40, 0.6) 75%, rgba(233, 117, 40, 0.5) 100%)"
+          backgroundColor: "#DB7B21"
         }}
       >
         {/* Decorative background elements */}

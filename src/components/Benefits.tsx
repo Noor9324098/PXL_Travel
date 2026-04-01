@@ -6,31 +6,31 @@ const benefits = [
     icon: CreditCard,
     title: "No Credit Card Hassle",
     description: "Perfect for users without international banking access. Submit booking requests and pay through local agencies.",
-    color: "from-accent to-warm",
+    color: "bg-[#DB7B21]",
   },
   {
     icon: Cpu,
     title: "AI-Powered Intelligence",
     description: "Machine learning algorithms analyze your preferences to provide personalized flight recommendations that match your travel style.",
-    color: "from-primary to-sky",
+    color: "bg-[#DB7B21]",
   },
   {
     icon: Users,
     title: "Local Agency Support",
     description: "Connect with trusted local travel agencies who understand your community and provide personalized service.",
-    color: "from-hero-start to-hero-end",
+    color: "bg-[#DB7B21]",
   },
   {
     icon: Globe,
     title: "Global Reach",
     description: "Access international flight options while maintaining the convenience and trust of local payment and support.",
-    color: "from-sky to-primary",
+    color: "bg-[#DB7B21]",
   },
 ];
 
 export const Benefits = () => {
   return (
-    <section className="py-24 bg-gradient-to-b from-secondary/30 to-background">
+    <section className="py-24 bg-[#DB7B21]/10">
       <div className="container mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
@@ -51,7 +51,7 @@ export const Benefits = () => {
               >
                 <CardContent className="p-8">
                   <div className="flex items-start gap-6">
-                    <div className={`flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-medium`}>
+                    <div className={`flex-shrink-0 w-16 h-16 rounded-2xl ${benefit.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-medium`}>
                       <benefit.icon className="w-8 h-8 text-white" />
                     </div>
                     <div>

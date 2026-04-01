@@ -1,3 +1,4 @@
+
 export type Flight = {
   id: string;
   origin: string;

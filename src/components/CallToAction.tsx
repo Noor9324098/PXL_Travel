@@ -4,14 +4,9 @@ import { Link } from "react-router-dom";
 
 export const CallToAction = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-primary via-hero-start to-hero-end relative overflow-hidden">
+    <section className="py-24 bg-[#DB7B21] relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
-        }} />
-      </div>
+      <div className="absolute inset-0 opacity-10 bg-[#DB7B21]" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center text-primary-foreground">

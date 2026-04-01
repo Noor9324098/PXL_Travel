@@ -116,7 +116,7 @@ const AddLocalFlights = () => {
                 Back to Dashboard
               </Button>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-hero-end rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#DB7B21] rounded-lg flex items-center justify-center">
                   <Plane className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>

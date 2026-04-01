@@ -47,8 +47,8 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     /* Custom PXL Travel tokens: blue-to-orange like logo wing */
-    --hero-gradient-start: 208 88% 42%;
-    --hero-gradient-end: 26 95% 56%;
+    --hero-gradient-start: 30 74% 49%;
+    --hero-gradient-end: 30 74% 49%;
     --sky-blue: 200 85% 60%;
     --warm-accent: 26 95% 56%;
 
@@ -118,8 +118,8 @@ All colors MUST be HSL.
     --ring: 208 90% 55%;
 
     /* Custom PXL Travel tokens - dark mode */
-    --hero-gradient-start: 208 90% 48%;
-    --hero-gradient-end: 26 95% 60%;
+    --hero-gradient-start: 30 74% 49%;
+    --hero-gradient-end: 30 74% 49%;
     --sky-blue: 200 85% 64%;
     --warm-accent: 26 95% 60%;
 
@@ -268,7 +268,7 @@ All colors MUST be HSL.
     right: 0;
     width: 800px;
     height: 800px;
-    background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 50%, #ADD8E6 100%);
+    background: #DB7B21;
     border-bottom-left-radius: 100%;
     display: flex;
     flex-direction: column;

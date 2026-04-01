@@ -49,7 +49,12 @@ const Booking = () => {
         <Header />
         <div className="pt-24 container mx-auto px-6 text-center">
           <h1 className="font-display text-2xl mb-4">No flight selected</h1>
-          <Button onClick={() => navigate("/search")}>Go to Search</Button>
+          <Button
+            onClick={() => navigate("/search")}
+            className="bg-[#DB7B21] hover:bg-[#c96e1d] text-white border-0"
+          >
+            Go to Search
+          </Button>
         </div>
       </div>
     );
@@ -105,23 +110,43 @@ const Booking = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: "rgba(219, 123, 33, 0.1)",
+      }}
+    >
       <Header />
       
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="mb-8 animate-fade-in">
+            <div className="w-12 h-12 mb-4 bg-[#DB7B21] rounded-lg flex items-center justify-center shadow-medium">
+              <Plane className="w-6 h-6 text-primary-foreground" />
+            </div>
             <h1 className="font-display text-4xl font-bold mb-2">Complete Your Booking</h1>
             <p className="text-muted-foreground">Fill in your details to confirm your flight reservation</p>
           </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
   <div className="lg:col-span-1 animate-slide-up">
-    {/* <FlightCard flight={flight} /> */}
+    <Card className="border-2 border-primary/20 shadow-medium">
+      <CardHeader>
+        <CardTitle className="font-display text-xl">Selected Flight</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="text-sm text-muted-foreground">Route</div>
+        <div className="font-semibold text-lg">{flight.origin} → {flight.destination}</div>
+        <div className="text-sm text-muted-foreground">Airline</div>
+        <div className="font-medium">{flight.airline}</div>
+        <div className="text-sm text-muted-foreground">Estimated Price</div>
+        <div className="font-display text-2xl text-primary">{flight.price}</div>
+      </CardContent>
+    </Card>
   </div>
 
   <Card
-    className="lg:col-span-2 border-2 shadow-large animate-slide-up"
+    className="lg:col-span-2 border-2 border-primary/20 shadow-large animate-slide-up"
     style={{ animationDelay: "0.1s" }}
   >
     <CardHeader>
@@ -132,7 +157,7 @@ const Booking = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="passengerFirstName" className="flex items-center gap-2">
-            <User className="w-4 h-4" />
+            <User className="w-4 h-4 text-primary" />
             First Name (as on passport)
           </Label>
           <Input
@@ -147,7 +172,7 @@ const Booking = () => {
         </div>
          <div className="space-y-2">
           <Label htmlFor="passengerLastName" className="flex items-center gap-2">
-            <User className="w-4 h-4" />
+            <User className="w-4 h-4 text-primary" />
             Last Name (as on passport)
           </Label>
           <Input
@@ -164,7 +189,7 @@ const Booking = () => {
 
         <div className="space-y-2">
           <Label htmlFor="phoneNumber" className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
+            <Phone className="w-4 h-4 text-primary" />
             Phone Number
           </Label>
           <Input
@@ -181,7 +206,7 @@ const Booking = () => {
 
         <div className="space-y-2">
           <Label htmlFor="transactionNumber" className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4" />
+            <CreditCard className="w-4 h-4 text-hero-end" />
             Transaction Number
           </Label>
           <Input
@@ -201,7 +226,7 @@ const Booking = () => {
           </p>
         </div>
 
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+        <div className="bg-accent/40 border border-primary/20 rounded-lg p-4 space-y-2">
           <p className="text-sm font-medium">Important Information:</p>
           <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
             <li>Ensure your passport is valid for at least 6 months</li>
@@ -210,7 +235,12 @@ const Booking = () => {
           </ul>
         </div>
 
-        <Button type="submit" className="w-full" size="lg" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full bg-[#DB7B21] hover:bg-[#c96e1d] text-white border-0"
+          size="lg"
+          disabled={loading}
+        >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />

@@ -24,7 +24,7 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
   - UrbanTransportation.tsx - Urban transport listings
   - AdminDashboard.tsx - Admin control panel
   - AdminBookings.tsx - Admin booking management
-  - ManageUsers.tsx - User management (super admin)
+  - ManageUsers.tsx - User management (admin user list)
   - AddLocalFlights.tsx - Add flight interface
   - AddUrbanTransportation.tsx - Add transport interface
 
@@ -50,6 +50,13 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
   - GET /api/bookings - Get user bookings
   - POST /api/bookings - Create booking
 
+- **Admin Bookings**:
+  - GET /api/admin/bookings - List all bookings (admin)
+  - POST /api/admin/bookings - Create booking for selected user (admin)
+  - PUT /api/admin/bookings/:id - Modify booking fields/status (admin)
+  - PATCH /api/admin/bookings/:id/status - Quick status update (admin)
+  - DELETE /api/admin/bookings/:id - Delete booking (admin)
+
 - **Local Flights**:
   - GET /api/local-flights - Get all flights
   - POST /api/local-flights - Add flight (admin only)
@@ -58,8 +65,8 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
   - GET /api/urban-transportation - Get all transports
   - POST /api/urban-transportation - Add transport (admin only)
 
-- **Users (Super Admin)**:
-  - GET /api/users - List all users
+- **Users (Admin)**:
+  - GET /api/users - List all users (name/email)
   - PUT /api/users/:id/admin - Update admin status
 
 - **AI Chat**:
@@ -75,6 +82,7 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
 - **Environment Variables**:
   - MONGODB_URI - MongoDB connection string
   - JWT_SECRET - JWT signing secret
+  - ADMIN_EMAILS - Optional comma-separated admin emails (default includes admin@pxltravel.com)
   - GROQ_API_KEY - AI chat API key
   - GROQ_MODEL - Optional Groq model override (default: llama-3.3-70b-versatile)
   - PORT - Server port (default 4000)
@@ -106,6 +114,10 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
 - **Flight Search Authentication**: Added authentication requirement for flight search functionality - users must sign in to access flight search
 - **AI Chat Error Handling**: Improved chat error parsing and added sanitized user-facing error categories for connectivity, configuration, request, and provider failures
 - **Groq Model Update**: Replaced deprecated model with configurable `GROQ_MODEL` and defaulted to `llama-3.3-70b-versatile`
+- **Admin Users Management Page**: Implemented users listing page for admins with search, names, and email addresses
+- **Admin Bookings Management Page**: Implemented full admin booking create, update, delete, and pending-to-booked status flows
+- **Admin API Expansion**: Added `/api/admin/bookings` CRUD/status endpoints and expanded `/api/users` access for admins
+- **Global Color Unification**: Replaced gradient-based UI backgrounds and icon treatments with DB7B21-based solid/tinted styles across the frontend
 
 ### Next Steps
 1. Implement full backend deployment

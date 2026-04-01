@@ -31,7 +31,7 @@ export const HowItWorks = () => {
   return (
     <section id="how-it-works" className="py-24 bg-background relative overflow-hidden">
       {/* Background Decoration */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-[#DB7B21]/10 pointer-events-none" />
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16 animate-fade-in">
@@ -53,17 +53,17 @@ export const HowItWorks = () => {
               >
                 {/* Connector Line (hidden on last item and mobile) */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-primary/30 to-transparent -translate-x-4" />
+                  <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-[#DB7B21]/30 -translate-x-4" />
                 )}
                 
                 <div className="relative bg-card border-2 border-border rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-medium group h-full">
                   {/* Number Badge */}
-                  <div className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-br from-primary to-hero-end rounded-full flex items-center justify-center text-primary-foreground font-display font-bold text-lg shadow-medium">
+                  <div className="absolute -top-4 -right-4 w-12 h-12 bg-[#DB7B21] rounded-full flex items-center justify-center text-primary-foreground font-display font-bold text-lg shadow-medium">
                     {step.number}
                   </div>
 
                   {/* Icon */}
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 bg-[#DB7B21]/15 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <step.icon className="w-8 h-8 text-primary" />
                   </div>
 

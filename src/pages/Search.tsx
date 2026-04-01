@@ -80,12 +80,25 @@ const Search = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: "rgba(219, 123, 33, 0.1)",
+      }}
+    >
       <Header />
 
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-6">
-          <Card className="mb-12 border-2 shadow-large">
+          <div className="mb-8 animate-fade-in">
+            <div className="w-12 h-12 mb-4 bg-[#DB7B21] rounded-lg flex items-center justify-center shadow-medium">
+              <SearchIcon className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <h1 className="font-display text-4xl font-bold mb-2">Search Flights</h1>
+            <p className="text-muted-foreground">Find your perfect route with PXL Travel</p>
+          </div>
+
+          <Card className="mb-12 border-2 border-primary/20 shadow-large bg-card">
             <CardHeader>
               <CardTitle className="font-display text-3xl flex items-center gap-2">
                 <SearchIcon className="w-8 h-8 text-primary" />
@@ -101,7 +114,7 @@ const Search = () => {
                 className="grid grid-cols-1 md:grid-cols-4 gap-4"
               >
                 <div className="space-y-2">
-                  <Label htmlFor="origin">Origin</Label>
+                  <Label htmlFor="origin" className="text-primary">Origin</Label>
                   <Input
                     id="origin"
                     placeholder="New York (JFK)"
@@ -113,7 +126,7 @@ const Search = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="destination">Destination</Label>
+                  <Label htmlFor="destination" className="text-primary">Destination</Label>
                   <Input
                     id="destination"
                     placeholder="London (LHR)"
@@ -140,7 +153,11 @@ const Search = () => {
                 </div> */}
 
                 <div className="flex items-end">
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button
+                    type="submit"
+                    className="w-full bg-[#DB7B21] hover:bg-[#c96e1d] text-white border-0"
+                    disabled={loading}
+                  >
                     <SearchIcon className="w-4 h-4 mr-2" />
                     {loading ? "Searching..." : "Search"}
                   </Button>
@@ -157,14 +174,14 @@ const Search = () => {
             {flights.map((flight, index) => (
               <Card
                 key={flight.id}
-                className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-medium animate-slide-up"
+                className="border-2 border-primary/20 hover:border-primary/50 transition-all duration-300 hover:shadow-medium animate-slide-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                     <div className="flex-1 space-y-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-primary to-hero-end rounded-lg flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#DB7B21] rounded-lg flex items-center justify-center">
                           <Plane className="w-6 h-6 text-primary-foreground" />
                         </div>
                         <div>
@@ -207,14 +224,14 @@ const Search = () => {
 
                     <div className="flex flex-col items-center gap-3 md:border-l md:pl-6">
                       <div className="flex items-center gap-2">
-                        <DollarSign className="w-5 h-5 text-accent" />
+                        <DollarSign className="w-5 h-5 text-hero-end" />
                         <span className="font-display text-3xl font-bold text-primary">
                           {flight.price}
                         </span>
                       </div>
                       <Button
                         onClick={() => handleBookFlight(flight)}
-                        className="w-full md:w-auto"
+                        className="w-full md:w-auto bg-[#DB7B21] hover:bg-[#c96e1d] text-white border-0"
                       >
                         Book Flight
                       </Button>

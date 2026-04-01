@@ -2,7 +2,7 @@ import { Header } from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Plane, Bus, Shield, ArrowRight } from "lucide-react";
+import { Plane, Bus, Shield, ArrowRight, ClipboardList, Users } from "lucide-react";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const AdminDashboard = () => {
@@ -10,7 +10,12 @@ const AdminDashboard = () => {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-background">
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundColor: "rgba(219, 123, 33, 0.1)",
+        }}
+      >
         <Header />
         
         <main className="pt-24 pb-12">
@@ -22,7 +27,7 @@ const AdminDashboard = () => {
                 <h1 className="font-display text-4xl font-bold">Admin Dashboard</h1>
               </div>
               <p className="text-muted-foreground text-lg">
-                Manage local flights and urban transportation services
+                Manage users, bookings, local flights, and urban transportation services
               </p>
             </div>
 
@@ -32,7 +37,7 @@ const AdminDashboard = () => {
               <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-large">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-hero-end rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#DB7B21] rounded-lg flex items-center justify-center">
                       <Plane className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
@@ -59,7 +64,7 @@ const AdminDashboard = () => {
               <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-large">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-hero-end rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#DB7B21] rounded-lg flex items-center justify-center">
                       <Bus className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
@@ -77,6 +82,60 @@ const AdminDashboard = () => {
                     className="w-full group"
                   >
                     Manage Urban Transportation
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Admin Bookings Card */}
+              <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-large">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-12 h-12 bg-[#DB7B21] rounded-lg flex items-center justify-center">
+                      <ClipboardList className="w-6 h-6 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <CardTitle className="font-display text-2xl">Admin Bookings</CardTitle>
+                      <CardDescription>Add, update, confirm, or delete bookings</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    Manage all customer booking requests and quickly switch status from pending to booked.
+                  </p>
+                  <Button
+                    onClick={() => navigate("/admin/bookings")}
+                    className="w-full group"
+                  >
+                    Manage Bookings
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Users Management Card */}
+              <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-large">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-12 h-12 bg-[#DB7B21] rounded-lg flex items-center justify-center">
+                      <Users className="w-6 h-6 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <CardTitle className="font-display text-2xl">Users Management</CardTitle>
+                      <CardDescription>View registered users and contact details</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    Browse all users with full names and email addresses in one centralized admin view.
+                  </p>
+                  <Button
+                    onClick={() => navigate("/admin/users")}
+                    className="w-full group"
+                  >
+                    View Users
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </CardContent>

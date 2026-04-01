@@ -99,6 +99,31 @@ const Booking = mongoose.model("Booking", bookingSchema);
 const LocalFlight = mongoose.model("LocalFlight", localFlightSchema);
 const UrbanTransport = mongoose.model("UrbanTransport", urbanTransportSchema);
 
+const configuredAdminEmails = (process.env.ADMIN_EMAILS || "admin@pxltravel.com")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+
+const hasAdminAccess = (user) => {
+  if (!user) return false;
+
+  const email = typeof user.email === "string" ? user.email.toLowerCase() : "";
+
+  return Boolean(
+    user.is_admin ||
+      user.is_super_admin ||
+      (email && configuredAdminEmails.includes(email)),
+  );
+};
+
+const requireAdmin = (req, res, next) => {
+  if (!hasAdminAccess(req.user)) {
+    return res.status(403).json({ error: "Admin access required" });
+  }
+
+  next();
+};
+
 // Authentication Middleware
 const authenticate = async (req, res, next) => {
   try {
@@ -179,6 +204,129 @@ app.post("/api/bookings", authenticate, async (req, res) => {
   }
 });
 
+// Admin Bookings Routes
+app.get("/api/admin/bookings", authenticate, requireAdmin, async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate("user_id", "full_name email")
+      .sort({ created_at: -1 });
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/admin/bookings", authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ error: "user_id is required" });
+    }
+
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const booking = new Booking(req.body);
+    await booking.save();
+    await booking.populate("user_id", "full_name email");
+
+    res.json(booking);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.put("/api/admin/bookings/:id", authenticate, requireAdmin, async (req, res) => {
+  try {
+    const allowedFields = [
+      "user_id",
+      "flight_origin",
+      "flight_destination",
+      "flight_date",
+      "passenger_first_name",
+      "passenger_last_name",
+      "phone_number",
+      "transaction_number",
+      "status",
+    ];
+
+    const updates = {};
+    allowedFields.forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    updates.updated_at = new Date();
+
+    const booking = await Booking.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    }).populate("user_id", "full_name email");
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    res.json(booking);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.patch(
+  "/api/admin/bookings/:id/status",
+  authenticate,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const { status } = req.body;
+
+      const allowedStatuses = ["pending", "booked", "cancelled"];
+      if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({
+          error: `Invalid status. Allowed values: ${allowedStatuses.join(", ")}`,
+        });
+      }
+
+      const booking = await Booking.findByIdAndUpdate(
+        req.params.id,
+        { status, updated_at: new Date() },
+        { new: true, runValidators: true },
+      ).populate("user_id", "full_name email");
+
+      if (!booking) {
+        return res.status(404).json({ error: "Booking not found" });
+      }
+
+      res.json(booking);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
+
+app.delete(
+  "/api/admin/bookings/:id",
+  authenticate,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const booking = await Booking.findByIdAndDelete(req.params.id);
+      if (!booking) {
+        return res.status(404).json({ error: "Booking not found" });
+      }
+
+      res.json({ success: true, id: req.params.id });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
+
 // Local Flights Routes
 app.get("/api/local-flights", async (req, res) => {
   try {
@@ -194,8 +342,7 @@ app.get("/api/local-flights", async (req, res) => {
 
 app.post("/api/local-flights", authenticate, async (req, res) => {
   try {
-    // Check if user is admin
-    if (!req.user.is_admin && !req.user.is_super_admin) {
+    if (!hasAdminAccess(req.user)) {
       return res.status(403).json({ error: "Admin access required" });
     }
     const flight = new LocalFlight(req.body);
@@ -221,8 +368,7 @@ app.get("/api/urban-transportation", async (req, res) => {
 
 app.post("/api/urban-transportation", authenticate, async (req, res) => {
   try {
-    // Check if user is admin
-    if (!req.user.is_admin && !req.user.is_super_admin) {
+    if (!hasAdminAccess(req.user)) {
       return res.status(403).json({ error: "Admin access required" });
     }
     const transport = new UrbanTransport(req.body);
@@ -236,11 +382,11 @@ app.post("/api/urban-transportation", authenticate, async (req, res) => {
 // Users Routes (Admin only)
 app.get("/api/users", authenticate, async (req, res) => {
   try {
-    if (!req.user.is_super_admin) {
-      return res.status(403).json({ error: "Super admin access required" });
+    if (!hasAdminAccess(req.user)) {
+      return res.status(403).json({ error: "Admin access required" });
     }
     const users = await User.find()
-      .select("-password")
+      .select("full_name email is_admin is_super_admin created_at")
       .sort({ created_at: -1 });
     res.json(users);
   } catch (error) {

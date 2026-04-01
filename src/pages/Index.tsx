@@ -94,7 +94,7 @@ const Index = () => {
       const apiBase =  `${API_BASE_URL}/api/chat`; //production URL if available, otherwise local server
 
 
-      const response = await fetch(`${apiBase}/api/chat`, { //Sends request to your server
+      const response = await fetch(`${API_BASE_URL}/api/chat`, { //Sends request to your server
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,8 +182,7 @@ const Index = () => {
     <div
       className="min-h-screen"
       style={{
-        background:
-          "linear-gradient(150deg, #fdf6e3 0%, #f8f1e8 25%, #e8f3ff 60%, #d7ecff 100%)",
+        backgroundColor: "rgba(219, 123, 33, 0.1)",
       }}
     >
       <Header />

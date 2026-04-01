@@ -11,7 +11,7 @@ export const Hero = () => {
           alt="Airplane wing during sunset" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-hero-end/75" />
+        <div className="absolute inset-0 bg-[#DB7B21]/80" />
       </div>
 
       {/* Content */}
@@ -72,7 +72,7 @@ export const Hero = () => {
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-[#DB7B21]/25 z-10" />
     </section>
   );
 };

@@ -99,7 +99,7 @@ export const Header = () => {
               <Link to="/auth" className="mr-16">
                 <Button 
                   variant="default"
-                  className="bg-gradient-to-r from-primary to-hero-end hover:from-primary/90 hover:to-hero-end/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200 font-semibold px-6 py-2"
+                  className="bg-[#DB7B21] hover:bg-[#c96e1d] text-white shadow-lg hover:shadow-xl transition-all duration-200 font-semibold px-6 py-2"
                 >
                   <User className="w-4 h-4 mr-2" />
                   Sign In

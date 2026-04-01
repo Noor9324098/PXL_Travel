@@ -11,8 +11,10 @@ import Search from "./pages/Search";
 import Booking from "./pages/Booking";
 import Bookings from "./pages/Bookings";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminBookings from "./pages/AdminBookings";
 import AddLocalFlights from "./pages/AddLocalFlights";
 import AddUrbanTransportation from "./pages/AddUrbanTransportation";
+import ManageUsers from "./pages/ManageUsers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/booking" element={<Booking />} />
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/bookings" element={<AdminBookings />} />
+          <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/local-flights" element={<AddLocalFlights />} />
           <Route path="/admin/urban-transportation" element={<AddUrbanTransportation />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

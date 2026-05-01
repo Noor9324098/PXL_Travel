@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Footer } from "@/components/Footer";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, Send, X } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 
 type ChatMessage = {
@@ -43,11 +43,11 @@ const toSanitizedChatError = (rawMessage: string, status?: number): string => {
     normalized.includes("networkerror") ||
     normalized.includes("err_connection")
   ) {
-    return "Cannot reach the AI service right now. Please make sure the backend server is running and try again.";
+    return "Cannot reach the chat assistant right now. Please make sure the backend server is running and try again.";
   }
 
   if (normalized.includes("groq_api_key") || normalized.includes("not configured")) {
-    return "AI assistant is temporarily unavailable due to a server configuration issue.";
+    return "The chat assistant is temporarily unavailable due to a server configuration issue.";
   }
 
   if (status === 400 || normalized.includes("messages array is required")) {
@@ -55,10 +55,10 @@ const toSanitizedChatError = (rawMessage: string, status?: number): string => {
   }
 
   if ((status && status >= 500) || normalized.includes("unexpected error while talking to the ai")) {
-    return "AI service is temporarily unavailable. Please try again in a moment.";
+    return "The chat assistant is temporarily unavailable. Please try again in a moment.";
   }
 
-  return "There was an issue contacting the AI assistant. Please try again shortly.";
+  return "There was an issue contacting the chat assistant. Please try again shortly.";
 };
 
 const Index = () => {
@@ -67,50 +67,42 @@ const Index = () => {
     {
       role: "assistant",
       content:
-        "Hi, I'm the PXL AI travel assistant. Ask me anything about flights, local routes, or how PXL works.",
+        "Hi, I'm the PXL AI chat assistant. Ask me about flights, trip ideas, local routes, or how booking works with PXL Travel.",
     },
   ]);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
 
   const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault(); //Prevents the form from reloading the page when you press send (Like stopping the app from closing when you hit Enter)
+    e.preventDefault();
 
-    const trimmed = input.trim(); //Removes spaces Example: "   hello   " → "hello"
+    const trimmed = input.trim();
+    if (!trimmed || isSending) return;
 
-    if (!trimmed || isSending) return; //Don’t send if: message is empty or already sending another message
+    const userMessage: ChatMessage = { role: "user", content: trimmed };
+    const nextMessages = [...messages, userMessage];
 
-    const userMessage: ChatMessage = { role: "user", content: trimmed }; //Immediately shows your message in the chat, Like: You see your message appear before the reply comes
-
-
-
-
-    const nextMessages = [...messages, userMessage]; //Clears textbox and prevents spam clicking
     setMessages(nextMessages);
     setInput("");
     setIsSending(true);
 
     try {
-      const apiBase =  `${API_BASE_URL}/api/chat`; //production URL if available, otherwise local server
-
-
-      const response = await fetch(`${API_BASE_URL}/api/chat`, { //Sends request to your server
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({  //Sends entire conversation, not just one message so AI remembers previous messages
-
-
-          messages: nextMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
+        body: JSON.stringify({
+          messages: nextMessages.map((message) => ({
+            role: message.role,
+            content: message.content,
           })),
         }),
       });
 
       if (!response.ok) {
-        let errorMessage = "Failed to contact AI";
+        let errorMessage = "Failed to contact assistant";
+
         try {
           const errorBody = await response.json();
           const parsedError = extractErrorMessage(errorBody);
@@ -118,7 +110,6 @@ const Index = () => {
             errorMessage = parsedError;
           }
         } catch {
-          // Ignore JSON parse errors and try plain text fallback.
           try {
             const errorText = await response.text();
             if (errorText.trim()) {
@@ -140,9 +131,8 @@ const Index = () => {
       }
 
       const data = await response.json();
-      const replyContent: string = // Use AI reply OR fallback if empty
-        data?.reply?.trim() ||
-        "Sorry, I couldn't generate a reply. Please try again.";
+      const replyContent: string =
+        data?.reply?.trim() || "Sorry, I couldn't generate a reply. Please try again.";
 
       setMessages((prev) => [
         ...prev,
@@ -158,15 +148,13 @@ const Index = () => {
         (requestError instanceof Error ? requestError.message : "Unknown error");
       const sanitizedMessage = toSanitizedChatError(rawMessage, requestError?.status);
 
-      // Log technical details for debugging while keeping user-facing errors sanitized.
-      // eslint-disable-next-line no-console
-      console.error("PXL AI chat error:", {
+      console.error("PXL chat assistant error:", {
         rawMessage,
         status: requestError?.status,
         error,
       });
 
-      setMessages((prev) => [ //Adds AI message to chat, Adds AI message to chat
+      setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
@@ -180,9 +168,10 @@ const Index = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen bg-background"
       style={{
-        backgroundColor: "rgba(219, 123, 33, 0.1)",
+        backgroundImage:
+          "linear-gradient(180deg, rgba(219, 123, 33, 0.08) 0%, rgba(219, 123, 33, 0.03) 36%, rgba(219, 123, 33, 0.08) 100%)",
       }}
     >
       <Header />
@@ -190,27 +179,24 @@ const Index = () => {
       <HowItWorks />
       <Footer />
 
-      {/* Chat panel */}
       {isChatOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 max-w-[90vw] max-h-[65vh] rounded-2xl bg-background/95 border border-border shadow-2xl flex flex-col overflow-hidden backdrop-blur-md">
-          <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/70">
+        <div className="fixed bottom-24 right-6 z-50 flex max-h-[65vh] w-80 max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-border bg-background/95 shadow-2xl backdrop-blur-md">
+          <div className="flex items-center justify-between border-b border-border bg-muted/70 px-3 py-2">
             <div className="flex items-center gap-2">
               <MessageCircle className="h-4 w-4 text-primary" />
-              <span className="text-xs font-semibold tracking-wide uppercase">
-                PXL AI Assistant
-              </span>
+              <span className="text-xs font-semibold uppercase tracking-wide">AI Chat Assistant</span>
             </div>
             <button
               type="button"
               onClick={() => setIsChatOpen(false)}
-              className="p-1 rounded-full hover:bg-background transition-colors"
+              className="rounded-full p-1 transition-colors hover:bg-background"
               aria-label="Close chat"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2">
+          <div className="flex-1 space-y-2 overflow-y-auto px-3 py-2">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -219,7 +205,7 @@ const Index = () => {
                 }`}
               >
                 <div
-                  className={`px-3 py-2 text-xs rounded-2xl leading-relaxed shadow-sm max-w-[85%] ${
+                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed shadow-sm ${
                     message.role === "assistant"
                       ? "bg-muted text-foreground"
                       : "bg-primary text-primary-foreground"
@@ -231,22 +217,19 @@ const Index = () => {
             ))}
           </div>
 
-          <form
-            onSubmit={handleSend}
-            className="border-t border-border px-2 py-2 flex gap-2"
-          >
+          <form onSubmit={handleSend} className="flex gap-2 border-t border-border px-2 py-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about flights or routes..."
+              placeholder="Ask about routes, prices, or travel ideas..."
               className="flex-1 rounded-full border border-input bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring"
               disabled={isSending}
             />
             <button
               type="submit"
               disabled={isSending || !input.trim()}
-              className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs disabled:opacity-60 disabled:cursor-not-allowed hover:scale-105 transition-transform"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60"
               aria-label="Send message"
             >
               <Send className="h-3 w-3" />
@@ -255,11 +238,11 @@ const Index = () => {
         </div>
       )}
 
-      {/* Fixed Chat AI Assistant button */}
       <button
         type="button"
-        aria-label="Chat with AI Assistant"
-        className="fixed bottom-6 right-6 z-40 h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        id="ai-assistant"
+        aria-label="Open AI Chat Assistant"
+        className="fixed bottom-6 right-6 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         style={{ position: "fixed" }}
         onClick={() => setIsChatOpen((open) => !open)}
       >

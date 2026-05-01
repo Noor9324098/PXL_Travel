@@ -1,43 +1,75 @@
+import { Link } from "react-router-dom";
 import { Plane } from "lucide-react";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-primary-foreground py-12 border-t border-primary-foreground/10">
+    <footer className="border-t border-primary-foreground/10 bg-primary py-12 text-primary-foreground">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-8 md:gap-16 mb-8">
-          {/* Quick Links */}
-          <div className="text-center">
-            <h3 className="font-display font-semibold mb-4">Quick Links</h3>
+        <div className="grid gap-10 md:grid-cols-[1.3fr_0.8fr_0.9fr]">
+          <div className="text-center md:text-left">
+            <div className="flex items-center justify-center gap-3 md:justify-start">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
+                <Plane className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-display text-xl font-semibold">PXL Travel</h3>
+                <p className="text-sm text-primary-foreground/70">
+                  Smart routes. Local support. Smoother booking.
+                </p>
+              </div>
+            </div>
+
+            <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-primary-foreground/80 md:mx-0">
+              Discover flights with confidence and book with support that feels personal from
+              the first search to final confirmation.
+            </p>
+          </div>
+
+          <div className="text-center md:text-left">
+            <h3 className="font-display mb-4 text-lg font-semibold">Explore</h3>
             <ul className="space-y-2 text-primary-foreground/80">
-              <li><a href="#" className="hover:text-accent transition-colors">Search Flights</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">How It Works</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">AI Assistant</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">About Us</a></li>
+              <li>
+                <Link to="/" className="transition-colors hover:text-accent">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/search" className="transition-colors hover:text-accent">
+                  Search Flights
+                </Link>
+              </li>
+              <li>
+                <Link to="/auth" className="transition-colors hover:text-accent">
+                  Sign In
+                </Link>
+              </li>
+              <li>
+                <Link to="/bookings" className="transition-colors hover:text-accent">
+                  My Bookings
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Support */}
-          <div className="text-center">
-            <h3 className="font-display font-semibold mb-4">Support</h3>
+          <div className="text-center md:text-left">
+            <h3 className="font-display mb-4 text-lg font-semibold">Why Travelers Stay</h3>
             <ul className="space-y-2 text-primary-foreground/80">
-              <li><a href="#" className="hover:text-accent transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">Contact Agency</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">Terms of Service</a></li>
+              <li>Quick, clear flight planning that saves time</li>
+              <li>Helpful local agency follow-up when it matters</li>
+              <li>Clear booking steps with less friction</li>
+              <li>One place for search, support, and updates</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-primary-foreground/60">
-            © {currentYear} جميع الحقوق محفوظة لشركة بكسل للسفريات والسياحة
-          </p>
-          <div className="flex gap-6 text-sm text-primary-foreground/60">
-            <a href="#" className="hover:text-accent transition-colors">Privacy</a>
-            <a href="#" className="hover:text-accent transition-colors">Terms</a>
-            <a href="#" className="hover:text-accent transition-colors">Cookies</a>
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-primary-foreground/10 pt-8 text-sm text-primary-foreground/65 md:flex-row">
+          <p>(c) {currentYear} PXL Travel. Crafted for confident, connected journeys.</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <span>Easy flight search</span>
+            <span>Local support</span>
+            <span>Travel made easier</span>
           </div>
         </div>
       </div>

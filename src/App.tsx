@@ -10,6 +10,8 @@ import SignUp from "./pages/SignUp";
 import Search from "./pages/Search";
 import Booking from "./pages/Booking";
 import Bookings from "./pages/Bookings";
+import LocalFlights from "./pages/LocalFlights";
+import UrbanTransportation from "./pages/UrbanTransportation";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBookings";
 import AddLocalFlights from "./pages/AddLocalFlights";
@@ -31,6 +33,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/local-flights" element={<LocalFlights />} />
+          <Route path="/urban-transportation" element={<UrbanTransportation />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/admin" element={<AdminDashboard />} />

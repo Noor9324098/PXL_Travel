@@ -5,7 +5,7 @@ const features = [
   {
     icon: Bot,
     title: "AI Chat Assistant",
-    description: "Get instant flight suggestions and booking help from our intelligent virtual assistant available 24/7.",
+    description: "Get instant flight suggestions and booking help whenever you need it.",
     colorClass: "bg-[#DB7B21]",
   },
   {
@@ -23,7 +23,7 @@ const features = [
   {
     icon: TrendingUp,
     title: "Smart Prioritization",
-    description: "Agency staff receive AI-assisted booking prioritization to handle your request efficiently.",
+    description: "Agency staff can handle your request efficiently and keep your booking moving.",
     colorClass: "bg-[#DB7B21]",
   },
   {
@@ -42,14 +42,14 @@ const features = [
 
 export const Features = () => {
   return (
-    <section id="features" className="py-24 bg-[#DB7B21]/10">
+    <section id="features" className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-foreground">
-            Why Choose PXL Travel?
+            Travel smarter, stress less
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Cutting-edge technology meets personalized service for seamless flight booking
+            The tools, support, and thoughtful details that make PXL Travel feel easy from day one
           </p>
         </div>
 

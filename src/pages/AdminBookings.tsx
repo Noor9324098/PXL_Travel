@@ -462,7 +462,7 @@ const AdminBookings = () => {
 													onChange={(e) =>
 														setFormData((prev) => ({ ...prev, passenger_first_name: e.target.value }))
 													}
-													placeholder="John"
+													placeholder="Nooraddeen"
 												/>
 											</div>
 											<div className="space-y-2">
@@ -472,7 +472,7 @@ const AdminBookings = () => {
 													onChange={(e) =>
 														setFormData((prev) => ({ ...prev, passenger_last_name: e.target.value }))
 													}
-													placeholder="Doe"
+													placeholder="Al-Haddad"
 												/>
 											</div>
 										</div>

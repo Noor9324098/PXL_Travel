@@ -2,8 +2,9 @@ import { Header } from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Plane, Bus, Shield, ArrowRight, ClipboardList, Users } from "lucide-react";
+import { Plane, Bus, Shield, ArrowRight, ClipboardList, Users, Activity } from "lucide-react";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -138,6 +139,38 @@ const AdminDashboard = () => {
                     View Users
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
+                </CardContent>
+              </Card>
+
+              {/* Speed Insights Card */}
+              <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-large md:col-span-2">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-12 h-12 bg-[#DB7B21] rounded-lg flex items-center justify-center">
+                      <Activity className="w-6 h-6 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <CardTitle className="font-display text-2xl">Vercel Speed Insights</CardTitle>
+                      <CardDescription>Real-time performance monitoring and analytics</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-background/50 rounded-xl p-6 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-center space-y-4">
+                    <p className="text-muted-foreground">
+                      Vercel Speed Insights is active. Performance data is being collected and analyzed in real-time.
+                    </p>
+                    <SpeedInsights />
+                    <a 
+                      href="https://vercel.com/dashboard" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                    >
+                      View Detailed Metrics on Vercel
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </a>
+                  </div>
                 </CardContent>
               </Card>
             </div>

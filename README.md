@@ -22,7 +22,7 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
   - Bookings.tsx - User bookings list
   - LocalFlights.tsx - Local flight listings with direct booking
   - UrbanTransportation.tsx - Bus-only urban transport listings with direct booking
-  - AdminDashboard.tsx - Admin control panel
+  - AdminDashboard.tsx - Admin control panel with Vercel Speed Insights
   - AdminBookings.tsx - Admin booking management
   - ManageUsers.tsx - User management (admin user list)
   - AddLocalFlights.tsx - Add flight interface

@@ -10,9 +10,10 @@ import { API_BASE_URL } from "@/lib/api";
 
 const signInSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
 });
-
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Auth = () => {
 
   useEffect(() => {
     // Check if user is already logged in (check localStorage for token)
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       navigate("/search");
     }
@@ -31,33 +32,38 @@ const Auth = () => {
 
   useEffect(() => {
     if (lottieRef.current) {
-      const lottieElement = document.createElement('dotlottie-wc');
-      lottieElement.setAttribute('src', 'https://lottie.host/daff50aa-bb55-45ce-a0c2-74a80f4d90cb/5plNLgMsRS.lottie');
-      lottieElement.setAttribute('autoplay', '');
-      lottieElement.setAttribute('loop', '');
-      lottieElement.setAttribute('mode', 'normal');
-      lottieElement.style.width = '100%';
-      lottieElement.style.height = '100%';
-      lottieElement.style.objectFit = 'cover';
-      
+      const lottieElement = document.createElement("dotlottie-wc");
+      lottieElement.setAttribute(
+        "src",
+        "https://lottie.host/daff50aa-bb55-45ce-a0c2-74a80f4d90cb/5plNLgMsRS.lottie",
+      );
+      lottieElement.setAttribute("autoplay", "");
+      lottieElement.setAttribute("loop", "");
+      lottieElement.setAttribute("mode", "normal");
+      lottieElement.style.width = "100%";
+      lottieElement.style.height = "100%";
+      lottieElement.style.objectFit = "cover";
+
       // Wait for the element to be fully loaded and then ensure seamless looping
       const ensureSeamlessLoop = () => {
         // Access the internal player if available
         if (lottieElement.shadowRoot) {
-          const player = lottieElement.shadowRoot.querySelector('dotlottie-player') as any;
+          const player = lottieElement.shadowRoot.querySelector(
+            "dotlottie-player",
+          ) as any;
           if (player) {
             // Ensure loop is enabled and mode is set for seamless playback
-            player.setAttribute('loop', 'true');
-            player.setAttribute('autoplay', 'true');
-            player.setAttribute('mode', 'normal');
-            
+            player.setAttribute("loop", "true");
+            player.setAttribute("autoplay", "true");
+            player.setAttribute("mode", "normal");
+
             // Listen for animation complete and immediately restart
-            player.addEventListener('complete', () => {
+            player.addEventListener("complete", () => {
               // Immediately seek to start and play for seamless loop
-              if (typeof player.seek === 'function') {
+              if (typeof player.seek === "function") {
                 player.seek(0);
               }
-              if (typeof player.play === 'function') {
+              if (typeof player.play === "function") {
                 player.play();
               }
             });
@@ -66,11 +72,11 @@ const Auth = () => {
       };
 
       // Try to configure when element is ready
-      lottieElement.addEventListener('ready', ensureSeamlessLoop);
-      
+      lottieElement.addEventListener("ready", ensureSeamlessLoop);
+
       // Also try after a short delay to ensure element is fully initialized
       setTimeout(ensureSeamlessLoop, 100);
-      
+
       lottieRef.current.appendChild(lottieElement);
 
       return () => {
@@ -83,15 +89,15 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const validated = signInSchema.parse(signInData);
       setLoading(true);
 
       const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: validated.email,
@@ -102,11 +108,11 @@ const Auth = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error || 'Sign in failed');
+        toast.error(data.error || "Sign in failed");
       } else {
         // Store token in localStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Signed in successfully!");
         navigate("/search");
       }
@@ -114,36 +120,38 @@ const Auth = () => {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
       } else {
-        toast.error('An error occurred during sign in');
+        toast.error("An error occurred during sign in");
       }
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
     <div className="min-h-screen flex relative">
       <Link to="/" className="absolute top-6 left-6 z-20">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="gap-2 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm border border-white/20 shadow-md hover:shadow-lg transition-all duration-200"
         >
           <Home className="w-4 h-4" />
           Return Home
         </Button>
       </Link>
-      
+
       {/* Lottie Animation Section - Left Half (Dark Teal-Blue) */}
-      <div className="hidden md:flex w-1/2 h-screen" style={{ backgroundColor: '#1a4d5e' }}>
+      <div
+        className="hidden md:flex w-1/2 h-screen"
+        style={{ backgroundColor: "#1a4d5e" }}
+      >
         <div className="w-full h-full" ref={lottieRef}></div>
       </div>
 
       {/* Auth Form Section - Right Half */}
-      <div 
+      <div
         className="w-full md:w-1/2 flex items-center justify-center h-screen relative overflow-hidden"
         style={{
-          backgroundColor: "#DB7B21"
+          backgroundColor: "#DB7B21",
         }}
       >
         {/* Decorative background elements */}
@@ -158,7 +166,9 @@ const Auth = () => {
             <CardContent className="p-8">
               {/* Header */}
               <div className="flex justify-between items-center mb-8">
-                <span className="text-sm font-semibold text-foreground uppercase tracking-wider">Already Members</span>
+                <span className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                  Already Members
+                </span>
                 <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors">
                   <HelpCircle className="w-4 h-4" />
                   Need help?
@@ -173,7 +183,9 @@ const Auth = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={signInData.email}
-                    onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
+                    onChange={(e) =>
+                      setSignInData({ ...signInData, email: e.target.value })
+                    }
                     className="h-12 text-base transition-all duration-200 hover:border-primary/50"
                     required
                   />
@@ -185,7 +197,12 @@ const Auth = () => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       value={signInData.password}
-                      onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
+                      onChange={(e) =>
+                        setSignInData({
+                          ...signInData,
+                          password: e.target.value,
+                        })
+                      }
                       className="h-12 text-base transition-all duration-200 hover:border-primary/50 pr-14"
                       required
                     />
@@ -193,15 +210,21 @@ const Auth = () => {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-10 flex items-center justify-center pointer-events-auto cursor-pointer bg-transparent"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all duration-200" 
+                <Button
+                  type="submit"
+                  className="w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all duration-200"
                   disabled={loading}
                 >
                   {loading ? (
@@ -218,7 +241,10 @@ const Auth = () => {
           </Card>
 
           {/* Sign Up Link */}
-          <div className="mt-6 text-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <div
+            className="mt-6 text-center animate-fade-in"
+            style={{ animationDelay: "0.2s" }}
+          >
             <p className="text-white/95 text-base font-medium">
               Don't have an account yet?{" "}
               <Link

@@ -17,6 +17,7 @@ export const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -40,6 +41,14 @@ export const Header = () => {
 
   const handleInternationalFlights = () => {
     navigate("/search");
+  };
+
+  const handleLocalFlights = () => {
+    navigate("/local-flights");
+  };
+
+  const handleUrbanTransportation = () => {
+    navigate("/urban-transportation");
   };
 
   const handleHowItWorks = () => {
@@ -108,52 +117,60 @@ export const Header = () => {
             )}
             
             <div className="menu-wrapper">
-              <button className="menu-btn" aria-label="Menu">
+              <button 
+                className={`menu-btn ${isMenuOpen ? 'active' : ''}`} 
+                aria-label="Menu"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
                 <Menu className="w-5 h-5" />
               </button>
-              <div className="radial-menu">
+              <div className={`rectangular-menu ${isMenuOpen ? 'open' : ''}`}>
                 <Button
                   variant="ghost"
                   className="w-full justify-start font-medium text-white hover:bg-white/10"
-                  onClick={handleHome}
+                  onClick={() => { handleHome(); setIsMenuOpen(false); }}
                 >
                   Home
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start font-medium text-white hover:bg-white/10"
-                  onClick={handleInternationalFlights}
+                  onClick={() => { handleInternationalFlights(); setIsMenuOpen(false); }}
                 >
                   International Flights
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start font-medium text-white hover:bg-white/10"
+                  onClick={() => { handleLocalFlights(); setIsMenuOpen(false); }}
                 >
                   Local Flights
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start font-medium text-white hover:bg-white/10"
+                  onClick={() => { handleUrbanTransportation(); setIsMenuOpen(false); }}
                 >
                   Buses And Urban Transportation
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start font-medium text-white hover:bg-white/10"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Special Offers
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start font-medium text-white hover:bg-white/10"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   FAQ
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full justify-start font-medium text-white hover:bg-white/10"
-                  onClick={handleHowItWorks}
+                  onClick={() => { handleHowItWorks(); setIsMenuOpen(false); }}
                 >
                   How It Works
                 </Button>

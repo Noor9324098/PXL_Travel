@@ -20,8 +20,8 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
   - Search.tsx - Flight/transport search
   - Booking.tsx - Booking interface
   - Bookings.tsx - User bookings list
-  - LocalFlights.tsx - Local flight listings
-  - UrbanTransportation.tsx - Urban transport listings
+  - LocalFlights.tsx - Local flight listings with direct booking
+  - UrbanTransportation.tsx - Bus-only urban transport listings with direct booking
   - AdminDashboard.tsx - Admin control panel
   - AdminBookings.tsx - Admin booking management
   - ManageUsers.tsx - User management (admin user list)
@@ -111,6 +111,9 @@ PXL Travel is a comprehensive travel booking platform built as a React-based fro
 - Admin Features: User management, content management
 
 ### Recent Changes
+- **Local and Urban Booking Pages**: Added dedicated local flights and bus transportation listing pages with mock routes, consistent card design, and direct booking actions.
+- **Unified Booking Flow**: Extended the booking page so it accepts international flights, local flights, and bus trips through the same checkout experience.
+- **Navigation Updates**: Updated the header menu and app routes to expose the new local flights and urban transportation pages.
 - **Flight Search Authentication**: Added authentication requirement for flight search functionality - users must sign in to access flight search
 - **AI Chat Error Handling**: Improved chat error parsing and added sanitized user-facing error categories for connectivity, configuration, request, and provider failures
 - **Groq Model Update**: Replaced deprecated model with configurable `GROQ_MODEL` and defaulted to `llama-3.3-70b-versatile`

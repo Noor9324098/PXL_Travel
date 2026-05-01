@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Plane, Calendar, Clock, Phone, CreditCard, Ticket } from "lucide-react";
+import { Calendar, Clock, Phone, CreditCard, Ticket } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 
 interface Booking {
@@ -92,7 +92,7 @@ const Bookings = () => {
               <Ticket className="w-6 h-6 text-primary-foreground" />
             </div>
             <h1 className="font-display text-4xl font-bold mb-2">My Bookings</h1>
-            <p className="text-muted-foreground">View and track your flight booking requests</p>
+            <p className="text-muted-foreground">View and track your travel booking requests</p>
           </div>
 
           {loading ? (
@@ -102,14 +102,14 @@ const Bookings = () => {
           ) : bookings.length === 0 ? (
             <Card className="border-2 border-primary/20 shadow-medium bg-card">
               <CardContent className="py-12 text-center">
-                <Plane className="w-16 h-16 text-primary mx-auto mb-4" />
+                <Ticket className="w-16 h-16 text-primary mx-auto mb-4" />
                 <h3 className="font-display text-xl font-semibold mb-2">No bookings yet</h3>
-                <p className="text-muted-foreground mb-6">Start searching for flights to make your first booking</p>
+                <p className="text-muted-foreground mb-6">Browse flights, local flights, or bus routes to make your first booking</p>
                 <Button
                   onClick={() => navigate("/search")}
                   className="bg-[#DB7B21] hover:bg-[#c96e1d] text-white border-0"
                 >
-                  Search Flights
+                  Browse Routes
                 </Button>
               </CardContent>
             </Card>
@@ -125,7 +125,7 @@ const Bookings = () => {
                     <div className="flex items-start justify-between">
                       <CardTitle className="font-display text-xl flex items-center gap-2">
                         <span className="w-8 h-8 rounded-md bg-[#DB7B21] flex items-center justify-center">
-                          <Plane className="w-4 h-4 text-primary-foreground" />
+                          <Ticket className="w-4 h-4 text-primary-foreground" />
                         </span>
                         {booking.flight_origin} → {booking.flight_destination}
                       </CardTitle>
@@ -139,7 +139,7 @@ const Bookings = () => {
                       <div className="flex items-start gap-3">
                         <Calendar className="w-5 h-5 text-primary mt-0.5" />
                         <div>
-                          <p className="text-sm text-muted-foreground">Flight Date</p>
+                          <p className="text-sm text-muted-foreground">Travel Date</p>
                           <p className="font-semibold">{new Date(booking.flight_date).toLocaleDateString()}</p>
                         </div>
                       </div>

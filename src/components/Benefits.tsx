@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { CreditCard, Globe, Users, Cpu } from "lucide-react";
+import { CreditCard, Globe, Users, Compass } from "lucide-react";
 
 const benefits = [
   {
@@ -9,9 +9,9 @@ const benefits = [
     color: "bg-[#DB7B21]",
   },
   {
-    icon: Cpu,
-    title: "AI-Powered Intelligence",
-    description: "Machine learning algorithms analyze your preferences to provide personalized flight recommendations that match your travel style.",
+    icon: Compass,
+    title: "Simple Trip Planning",
+    description: "Plan your route with clear options that fit your schedule, style, and budget.",
     color: "bg-[#DB7B21]",
   },
   {
@@ -30,15 +30,15 @@ const benefits = [
 
 export const Benefits = () => {
   return (
-    <section className="py-24 bg-[#DB7B21]/10">
+    <section className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-foreground">
-              Built for Everyone
+              Built for real-world travel
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Breaking down barriers to make flight booking accessible to all
+              Clear tools, flexible support, and thoughtful service for every kind of traveler
             </p>
           </div>
 

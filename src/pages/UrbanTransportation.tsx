@@ -68,7 +68,7 @@ const UrbanTransportation = () => {
 								</CardHeader>
 
 								<CardContent>
-									<div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.3fr_0.9fr_0.9fr_0.8fr] lg:items-center">
+									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.9fr_0.9fr_0.8fr] gap-4 lg:items-center">
 										<div className="space-y-1">
 											<p className="text-sm text-muted-foreground">Route</p>
 											<p className="font-semibold text-lg">{trip.origin} → {trip.destination}</p>

@@ -157,8 +157,8 @@ const Booking = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 animate-slide-up">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-1 animate-slide-up">
               <Card className="border-2 border-primary/20 shadow-medium">
                 <CardHeader>
                   <CardTitle className="font-display text-xl">Selected Route</CardTitle>
@@ -193,7 +193,7 @@ const Booking = () => {
             </div>
 
             <Card
-              className="lg:col-span-2 border-2 border-primary/20 shadow-large animate-slide-up"
+              className="md:col-span-2 border-2 border-primary/20 shadow-large animate-slide-up"
               style={{ animationDelay: "0.1s" }}
             >
               <CardHeader>
@@ -211,7 +211,7 @@ const Booking = () => {
                     </Label>
                     <Input
                       id="passengerFirstName"
-                      placeholder="John"
+                      placeholder="Nooraddeen"
                       value={bookingData.passengerFirstName}
                       onChange={(e) =>
                         setBookingData({ ...bookingData, passengerFirstName: e.target.value })
@@ -227,7 +227,7 @@ const Booking = () => {
                     </Label>
                     <Input
                       id="passengerLastName"
-                      placeholder="Doe"
+                      placeholder="Al-Haddad"
                       value={bookingData.passengerLastName}
                       onChange={(e) =>
                         setBookingData({ ...bookingData, passengerLastName: e.target.value })

@@ -1,0 +1,13 @@
+{
+  "name": "pxl-travel-api-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Black-box API tests: start the unchanged Backend/server.js against an in-memory MongoDB and test it over HTTP.",
+  "scripts": {
+    "test": "node --test --test-reporter=spec api.test.js"
+  },
+  "devDependencies": {
+    "mongodb": "^6.10.0",
+    "mongodb-memory-server": "^10.1.2"
+  }
+}
